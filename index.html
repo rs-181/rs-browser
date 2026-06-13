@@ -472,7 +472,7 @@
       <div id="suggestionsList" class="suggestions-list"></div>
       <div class="search-info">
         <i class="fas fa-lock"></i>
-        <span>Private search by DuckDuckGo</span>
+        <span>Private search by RS Browser</span>
       </div>
     </div>
 
@@ -791,7 +791,7 @@
       if (query.match(/^(https?:\/\/|www\.)/i) || query.includes('.')) {
         url = query.startsWith('http') ? query: 'https://' + query;
       } else {
-        url = 'https://duckduckgo.com/?q=' + encodeURIComponent(query);
+        url = 'https://google.com/?q=' + encodeURIComponent(query);
       }
       window.location.href = url;
     }
