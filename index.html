@@ -791,7 +791,7 @@
       if (query.match(/^(https?:\/\/|www\.)/i) || query.includes('.')) {
         url = query.startsWith('http') ? query: 'https://' + query;
       } else {
-        url = 'https://google.com/?q=' + encodeURIComponent(query);
+        url = 'https://google.com/search?q=' + encodeURIComponent(query);
       }
       window.location.href = url;
     }
