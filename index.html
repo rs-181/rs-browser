@@ -461,6 +461,17 @@
         <span id="engineInfoText">Secure routing via Google</span>
       </div>
     </div>
+    
+        <div class="shortcuts-section">
+      <div class="section-title">MY SHORTCUTS</div>
+      <div class="highlights-grid" id="shortcutsGrid">
+        <div class="shortcut-btn-add" onclick="addNewShortcut()">
+          <i class="fas fa-plus" style="font-size: 1.1rem; margin-bottom: 6px;"></i>
+          <span>Add Shortcut</span>
+        </div>
+      </div>
+    </div>
+
 
 
     <!-- Highlights Section -->
@@ -647,11 +658,12 @@
     let selectedIndex = -1;
     let currentSuggestions = [];
 
-    // Auto-focus on search input when page loads
+    // Auto-focus on search input when page loads & render shortcuts
     window.addEventListener('load', function() {
       setTimeout(() => {
         searchInput.focus();
       }, 600);
+      renderShortcuts(); // Persistent shortcuts को लोड करना
     });
 
     // Click anywhere on search wrapper to focus input
@@ -799,7 +811,7 @@
       else if(engine === 'bing') infoText.textContent = "AI-Powered search by Microsoft Bing";
     });
 
-    // Main Search Click Listener (यह लाइन वापस जोड़ दी गई है)
+    // Main Search Click Listener
     document.getElementById('searchButton').addEventListener('click', () => performSearch());
 
     // Keyboard navigation
@@ -889,6 +901,64 @@
         searchInput.dispatchEvent(new Event('input'));
       }
     });
+
+    // Persistent Shortcuts Engine (via LocalStorage)
+    function getShortcuts() {
+      return JSON.parse(localStorage.getItem('rs_shortcuts')) || [];
+    }
+
+    function saveShortcuts(shortcuts) {
+      localStorage.setItem('rs_shortcuts', JSON.stringify(shortcuts));
+    }
+
+    function renderShortcuts() {
+      const grid = document.getElementById('shortcutsGrid');
+      const shortcuts = getShortcuts();
+      if (!grid) return;
+      
+      const existingCards = grid.querySelectorAll('.highlight-card');
+      existingCards.forEach(card => card.remove());
+
+      shortcuts.forEach((sc, index) => {
+        const card = document.createElement('div');
+        card.className = 'highlight-card';
+        card.innerHTML = `
+          <div class="card-icon"><i class="fas fa-bookmark"></i></div>
+          <div class="card-title">${sc.title}</div>
+          <div class="card-url">${sc.url}</div>
+          <div class="card-desc"><i class="fas fa-link"></i> <span>Launch Site</span></div>
+          <span class="badge" onclick="deleteShortcut(${index}, event)" style="background:rgba(255,0,127,0.15); color:var(--neon-magenta); border:1px solid rgba(255,0,127,0.3);">Delete</span>
+        `;
+        
+        card.addEventListener('click', (e) => {
+          if(!e.target.classList.contains('badge')) {
+            window.open(sc.url.startsWith('http') ? sc.url : 'https://' + sc.url, '_blank');
+          }
+        });
+        
+        grid.insertBefore(card, grid.lastElementChild);
+      });
+    }
+
+    function addNewShortcut() {
+      const title = prompt("Enter Shortcut Name:");
+      if (!title) return;
+      let url = prompt("Enter Website URL (e.g., github.com):");
+      if (!url) return;
+
+      const shortcuts = getShortcuts();
+      shortcuts.push({ title, url });
+      saveShortcuts(shortcuts);
+      renderShortcuts();
+    }
+
+    function deleteShortcut(index, event) {
+      event.stopPropagation();
+      const shortcuts = getShortcuts();
+      shortcuts.splice(index, 1);
+      saveShortcuts(shortcuts);
+      renderShortcuts();
+    }
   </script>
   <div class="bottom-dock">
     <a href="tel:+919725936153" class="dock-item dock-call">
@@ -904,5 +974,6 @@
       <span>Instagram</span>
     </a>
   </div>
+
 </body>
 </html>
