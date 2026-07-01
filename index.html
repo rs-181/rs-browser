@@ -228,6 +228,15 @@
       margin-bottom: 1.5rem;
       text-align: center;
     }
+    /* Search container ko smooth movement dene ke liye */
+.search-container {
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Jab typing start ho, to search bar ko upar bhejne ke liye */
+body.search-active .search-container {
+  transform: translateY(-28vh); 
+}
 
     .highlights-grid {
       display: grid;
